@@ -36,5 +36,5 @@ Detailed explanation is available in the `Documentation` folder.
 
 ##  Author
 **Sanmith G S**  
-M.Tech – Smart Electric Grid  
-NIT Warangal
+M.Tech – Smart Electric Grid , NIT Warangal
+B.E - Electrical Electronics , BMS College Of Engineering
