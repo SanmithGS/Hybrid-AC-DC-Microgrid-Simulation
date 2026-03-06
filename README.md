@@ -1,12 +1,5 @@
 # 🔌 Hybrid AC/DC Microgrid Simulation (Grid-Connected Mode)
 
-![MATLAB](https://img.shields.io/badge/MATLAB-R2025a-0076A8?style=flat-square&logo=mathworks&logoColor=white)
-![Simulink](https://img.shields.io/badge/Simulink-R2025a-0076A8?style=flat-square&logo=mathworks&logoColor=white)
-![Simscape](https://img.shields.io/badge/Simscape%20Electrical-R2025a-0076A8?style=flat-square)
-![IEEE](https://img.shields.io/badge/IEEE%2014--Bus-Test%20System-2C3E50?style=flat-square)
-![IEEE 519](https://img.shields.io/badge/IEEE%20519-THD%20Compliant-brightgreen?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=flat-square)
-
 ## Overview
 
 A MATLAB/Simulink simulation of a **Hybrid AC/DC Microgrid** based on the **IEEE 14-Bus test system**, operating in **grid-connected mode**. The model performs comprehensive power quality analysis including voltage profiling, active/reactive power balancing, power factor assessment, line loss estimation, and Total Harmonic Distortion (THD) evaluation — all validated against IEEE standards.
