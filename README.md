@@ -1,8 +1,11 @@
-# 🔌 Hybrid AC/DC Microgrid Simulation (Grid-Connected Mode)
+# 🏙️ AI-Driven Smart Campus Energy Management System
 
 ## Overview
 
-A MATLAB/Simulink simulation of a **Hybrid AC/DC Microgrid** based on the **IEEE 14-Bus test system**, operating in **grid-connected mode**. The model performs comprehensive power quality analysis including voltage profiling, active/reactive power balancing, power factor assessment, line loss estimation, and Total Harmonic Distortion (THD) evaluation — all validated against IEEE standards.
+A **MATLAB/Simulink Digital Twin** and **ESP32 hardware prototype** of an AI-powered Smart Campus Energy Management System (EMS), developed for **Hitachi INNOTHON 3.0** at NIT Warangal. The system integrates **ANN-based load and solar forecasting**, **intelligent BESS dispatch**, **real-time anomaly and fault detection**, and a **live financial impact dashboard** — validated on both simulation and physical hardware.
+
+> 🏆 **4th Place (Consolation Prize) | ₹10,000 Cash Award | 28 Competing Teams**
+> Team Jayanova | Hitachi INNOTHON 3.0 | NIT Warangal | March 2026
 
 ---
 
@@ -10,35 +13,44 @@ A MATLAB/Simulink simulation of a **Hybrid AC/DC Microgrid** based on the **IEEE
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| MATLAB | R2025a | Scripting, post-processing & analysis |
-| Simulink | R2025a | System modeling & simulation |
-| Simscape Electrical | R2025a | Power electronic component modeling |
+| MATLAB | R2025a | ANN training, EMS logic, KPI computation |
+| Simulink | R2025a | Digital Twin modeling & real-time dashboard |
+| ESP32 | — | Hardware prototype & physical EMS validation |
+| Arduino IDE | — | ESP32 firmware development |
 
 ---
 
 ## 🏗️ System Architecture
 
-| Subsystem | Description |
-|-----------|-------------|
-| **AC Grid** | IEEE 14-bus network (Bus2AC–Bus16AC) as utility reference |
-| **DC Bus** | Central DC link interconnecting distributed energy resources |
-| **Generation Sources** | Diesel generator (Bus8AC), Grid & converter sources (Bus12AC, Bus14AC) |
-| **Load Centers** | High-consumption buses at Bus4AC, Bus6AC, Bus10AC |
-| **Converters** | AC/DC and DC/DC converters for bus coupling |
-| **Controller** | PLL-based grid synchronization with proportional control (Kp, Kq) |
+| Module | Description |
+|--------|-------------|
+| **ANN Load Forecaster** | 15-10 neuron feedforward network; features: 3-lag + sin/cos(hour) + day-of-week |
+| **ANN Solar Forecaster** | 8-neuron feedforward network; features: 3-lag + sin/cos(hour) |
+| **AI BESS Dispatch** | Rule-based intelligent dispatch using dynamic 75th-percentile peak threshold |
+| **Battery Model** | 2 MWh Li-ion BESS; SOC limits 20–90%; η_charge=0.95, η_discharge=0.97 |
+| **Anomaly Detector** | Statistical 3-sigma fault detection with 3-step sustained confirmation |
+| **Financial Engine** | Peak demand savings, energy savings, payback period, CO₂ offset computation |
+| **Hardware Prototype** | ESP32-based physical EMS validating Digital Twin dispatch decisions |
+| **Real-time Dashboard** | 6-panel MATLAB live dashboard: forecasting, grid import, SOC, anomalies, financials |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-Hybrid-AC-DC-Microgrid-Simulation/
+AI-Smart-Campus-EMS/
 │
-├── Model/                  # Simulink models (.slx)
-├── Matlab codes/           # MATLAB analysis scripts
-├── Data/                   # Input parameters and load profiles
-├── Results/                # Simulation waveforms and plots
-└── Documentation/          # Project report and system diagrams
+├── MATLAB/                  # MATLAB simulation scripts
+│   └── Jayanova_Innothon.m  # Main EMS simulation file
+├── Hardware/                # ESP32 hardware files
+│   ├── firmware/            # Arduino IDE firmware (.ino)
+│   ├── circuit_diagram/     # ESP32 wiring schematic
+│   └── demo_video/          # Hardware working demo
+├── Results/                 # Simulation outputs and plots
+│   ├── AI_EMS_Dashboard.png # 6-panel KPI dashboard
+│   ├── 24hr_operational_view.png
+│   └── fault_detection_plot.png
+└── Documentation/           # Report and presentation slides
 ```
 
 ---
@@ -46,92 +58,116 @@ Hybrid-AC-DC-Microgrid-Simulation/
 ## ▶️ How to Run
 
 1. Open **MATLAB R2025a** (or compatible version)
-2. Navigate to the `Model/` folder
-3. Open the `.slx` Simulink model file
-4. Click **Run** (`Ctrl+T`)
-5. View results in Scope blocks or export to `Results/`
+2. Navigate to the `MATLAB/` folder
+3. Open and run `Jayanova_Innothon.m`
+4. MATLAB will automatically train ANNs, run EMS loop, and generate 4 figures
+5. Final KPI summary prints to console on completion
 
-> ⚠️ Requires **Simscape Electrical** toolbox. Ensure it is installed via MATLAB Add-Ons Manager.
+> ⚠️ Requires **Deep Learning Toolbox** for ANN training (`fitnet`). Ensure it is installed via MATLAB Add-Ons Manager.
 
 ---
 
 ## 📊 Simulation Results
 
-### Voltage Profile
+### ANN Forecast Performance
+| Model | MAE | RMSE | R² | MAPE |
+|-------|-----|------|----|------|
+| Load Forecaster (15-10 ANN) | < 0.05 MW | < 0.07 MW | > 0.97 | < 3% |
+| Solar Forecaster (8 ANN) | < 0.03 MW | < 0.04 MW | > 0.96 | < 4% |
+
+- ✅ Load ANN: 3-lag + sinusoidal time encoding + day-of-week features
+- ✅ Solar ANN: Captures diurnal generation profile accurately
+- ✅ 70/15/15 train/validation/test split with fixed random seed (rng=42) for reproducibility
+
+---
+
+### AI EMS Technical Performance
 | Metric | Value |
 |--------|-------|
-| Acceptable voltage range (IEEE standard) | 0.95 – 1.05 pu |
-| Buses within acceptable range | Most buses ✅ |
-| Bus2AC status | Undervoltage risk ⚠️ |
-| Bus14AC status | Significant voltage drop (reactive absorption) ⚠️ |
-| ADVS — Phase a | 0.0568 pu |
-| ADVS — Phase b | 0.0412 pu |
-| ADVS — Phase c | 0.0499 pu |
+| Campus Load Range | 1.5 – 6.0 MW |
+| Rooftop Solar Capacity | 0 – 1.0 MW |
+| BESS Capacity | 2.0 MWh (SOC: 20–90%) |
+| Peak Demand Reduction | ~18–22% |
+| Battery Round-trip Efficiency | 92.15% (η_c × η_d) |
+| Solar Utilization | 100% (solar < load at all times) |
+| Simulation Duration | 60 days, hourly resolution (1440 points) |
 
-> ADVS (Average Deviation from Voltage Set-point) computed as `mean(abs(V_pu - 1))` across all buses.
-
----
-
-### Active & Reactive Power Balance
-| Bus | Role | Observation |
-|-----|------|-------------|
-| Bus8AC | Diesel Generator | Major active power source |
-| Bus12AC, Bus14AC | Grid + Converter | Supporting generation nodes |
-| Bus4AC, Bus6AC, Bus10AC | Load Centers | Highest active power consumption |
-
-- ✅ Active and reactive power well distributed across all 3 phases
-- ✅ Effective operation under high demand with distributed generation support
-- ⚠️ Bus6AC — peak reactive power injection ~1,500 VAR
-- ⚠️ Bus14AC — reactive power absorption ~−2,100 VAR, indicating voltage stress
+- ✅ AI dispatch reduces grid peak demand through intelligent charge/discharge scheduling
+- ✅ Dynamic peak threshold adapts to load profile (75th percentile)
+- ✅ Battery SOC maintained within safe limits (20–90%) at all times
+- ⚠️ Round-trip losses over 60 days computed and reported in KPI summary
 
 ---
 
-### Power Factor Analysis
-| Bus | Power Factor | Status |
-|-----|-------------|--------|
-| Bus10AC, Bus12AC | ~1.0 (near unity) | ✅ Best — efficient & balanced |
-| Bus4AC, Bus8AC | ~0.75 – 0.80 | ⚠️ Moderate |
-| Bus2AC, Bus6AC | ~0.40 – 0.45 | ❌ Lowest — high reactive flow |
-| Bus14AC | ~0.50 – 0.60 | ❌ Load-heavy bus |
-
-> System would benefit from reactive power compensation (capacitor banks or STATCOM) at Bus2AC and Bus6AC.
-
----
-
-### Power Losses per Line
-| Line | Losses | Cause |
-|------|--------|-------|
-| Line4AC, Line8AC | ~9–10 kW ❌ Highest | Long distance + high current + low PF |
-| Line2AC, Line10AC | ~2–5 kW ⚠️ Moderate | Moderate loading |
-| Line6AC, Line12AC, Line14AC | < 1 kW ✅ Minimal | Low loading, good PF |
-
-- ✅ Phase losses (a, b, c) balanced in most lines
-- ⚠️ Slight phase imbalance in heavily loaded lines (Line4AC, Line8AC)
-
----
-
-### Total Harmonic Distortion (THD)
+### Anomaly & Fault Detection
 | Metric | Value |
 |--------|-------|
-| THD range (all buses, all phases) | 2.3% – 3.5% |
-| IEEE 519 compliance limit | < 5% |
-| Compliance status | ✅ All buses compliant |
-| Highest THD | Phase C — up to **3.4%** at Bus2AC & Bus12AC |
-| Lowest THD | **2.3%** at Bus6AC & Bus10AC |
+| Detection Method | 3-sigma statistical threshold on ANN prediction error |
+| Fault Confirmation | 3-step sustained deviation check (reduces false positives) |
+| Anomalies Detected | Reported per simulation run |
+| Sustained Fault Events | Reported per simulation run |
 
-> Minor inter-phase THD variation observed — indicates slight harmonic imbalance but acceptable power quality per IEEE 519 standard.
+- ✅ Detects sudden load spikes and abnormal consumption events
+- ✅ 3-step confirmation avoids false alarms from momentary disturbances
+- ✅ Fault events flagged and visualized on dedicated dashboard panel
+
+---
+
+### Financial & Carbon Impact
+| Metric | Value |
+|--------|-------|
+| Electricity Tariff | Rs 400/kW (demand) + Rs 8/kWh (energy) |
+| BESS Capital Cost | Rs 1.2 Crore |
+| Peak Demand Savings | Computed over 60-day simulation |
+| Annual Net Savings | Extrapolated from 60-day results |
+| BESS Payback Period | Reported in KPI summary (years) |
+| Solar CO₂ Offset | Computed using CEA emission factor: 0.82 kg CO₂/kWh |
+| Battery-shift CO₂ Saving | Additional saving from BESS energy shifting |
+
+- ✅ All financial metrics computed using Indian electricity tariff structure
+- ✅ CO₂ impact quantified using India 2023 Central Electricity Authority emission factor
+- ✅ Payback period calculated against realistic BESS capital investment
+
+---
+
+### Hardware Prototype Validation
+| Component | Specification |
+|-----------|--------------|
+| Microcontroller | ESP32 (dual-core, Wi-Fi enabled) |
+| Purpose | Physical validation of AI EMS dispatch decisions |
+| Dashboard | Real-time display of EMS status, SOC, and power flow |
+| Validation | Hardware results consistent with MATLAB Digital Twin outputs |
+
+- ✅ ESP32 prototype validates the Digital Twin's energy dispatch logic in real hardware
+- ✅ Real-time dashboard displays live EMS decisions and system status
+- ✅ Hardware demo available in `Hardware/demo_video/`
 
 ---
 
 ## 🔑 Key Concepts Demonstrated
 
-- Hybrid AC/DC microgrid architecture and IEEE 14-bus power system modeling
-- Three-phase power flow analysis — active (P), reactive (Q), apparent (S)
-- Voltage profile monitoring with ADVS deviation quantification
-- Power factor computation (PF = P/S) and I²R line loss assessment
-- THD analysis via FFT — benchmarked against IEEE 519 Standard (< 5%)
-- PLL-based grid synchronization control
-- Proportional control law for power balance correction (ΔP, ΔQ)
+- Artificial Neural Network (ANN) design for time-series load and solar forecasting
+- AI-driven Battery Energy Storage System (BESS) dispatch with dynamic peak shaving
+- Statistical anomaly detection and sustained fault confirmation using 3-sigma method
+- Digital Twin modeling in MATLAB/Simulink with real-time 6-panel KPI dashboard
+- ESP32 hardware prototyping and firmware development for embedded EMS
+- Financial modeling — demand charge savings, payback period, ROI analysis
+- Carbon impact quantification using CEA India emission factors
+- Smart campus energy optimization — peak demand reduction and solar integration
+
+---
+
+## 🏆 Competition
+
+| Detail | Info |
+|--------|------|
+| Event | Hitachi INNOTHON 3.0 |
+| Organizer | Hitachi Energy |
+| Venue | NIT Warangal |
+| Teams | 28 participating teams |
+| Result | **4th Place — Consolation Prize** |
+| Prize | **₹10,000 Cash Award** |
+| Team Name | Jayanova |
 
 ---
 
@@ -142,4 +178,5 @@ Hybrid-AC-DC-Microgrid-Simulation/
 - 🎓 M.Tech – Smart Electric Grid, **NIT Warangal**
 - 🎓 B.E – Electrical & Electronics Engineering, **BMS College of Engineering, Bengaluru**
 - 🔗 [LinkedIn](https://www.linkedin.com/in/sanmith-g-s)
+- 🐙 [GitHub](https://github.com/SanmithGS)
 - 📧 sannysanmith@gmail.com
